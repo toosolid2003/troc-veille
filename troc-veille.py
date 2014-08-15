@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 # -*-coding:utf-8 -*
 
 from fonctions import *
@@ -52,7 +52,7 @@ class Billet:
 ##Lancement de la requête
 ########################################################
 
-def requete(vd, va, dd):
+def requete():
     #Constitution du browser
 
     browser = mechanize.Browser(factory=mechanize.RobustFactory())
@@ -60,20 +60,10 @@ def requete(vd, va, dd):
     #Simulation d'un agent humain en faisant semblant d'utiliser firefox - grâce aux headers
     browser.addheaders = [('User-agent', 'Mozilla 5.10')]
 
-    #Ouverture du site et sélection du formulaire des trains
+    #Ouverture du de la page "billets déposés aujourd'hui"
 
-    req = mechanize.Request('http://www.trocdestrains.com')
-    reponse = browser.open(req)
-    browser.select_form(name="recherche_prems")
+    reponse = browser.open('http://trocdestrains.com/?choix=rech_recents&tri_col=date_depot&tri_sens=DESC')
 
-    #Entrée des données du formulaire
-
-    browser['ville_dep'] = [vd]
-    browser['ville_arr'] = [va]
-    browser['L_jour_dep'] = [dd[0:2]]
-    browser['L_mois_annee_dep'] = [dd[6:10] + '-'+ dd[3:5]]
-
-    reponse = browser.submit(name="choix_rech_billet")
     return reponse
 
 ##Parsing de la réponse
@@ -158,25 +148,25 @@ def main():
     
     parser = argparse.ArgumentParser(description='Requete automatisee sur trocdestrains.com')
     
-    parser.add_argument('-vdep', action='store', dest='ville_depart', help='ville de départ')
+#    parser.add_argument('-vdep', action='store', dest='ville_depart', help='ville de départ')
     parser.add_argument('-varr', action='store', dest='ville_arrivee', help='ville d\'arrivée')
-    parser.add_argument('-ddep', action='store', dest='date_depart', help='date de départ')
-    parser.add_argument('-dret', action='store', dest='date_retour', help='date de retour (facultatif)', default='aller_simple')
+#    parser.add_argument('-ddep', action='store', dest='date_depart', help='date de départ')
+#    parser.add_argument('-dret', action='store', dest='date_retour', help='date de retour (facultatif)', default='aller_simple')
     parser.add_argument('-c', action='store', dest='contacts', help='nombre de contacts max reçu(s) par billet (facultatif). Defaut = 1',\
                         default=1, type=int)
     
     resultats = parser.parse_args()
     
-    vd = resultats.ville_depart
+#    vd = resultats.ville_depart
     va = resultats.ville_arrivee
-    dd = resultats.date_depart
-    dr = resultats.date_retour
+#    dd = resultats.date_depart
+#    dr = resultats.date_retour
     ct = resultats.contacts
 
-    #Lancement de la requête
-    reponse = requete(vd, va, dd)
+    #Ouverture de la page 'Billets déposés aujourd'hui'
+    reponse = requete()
     
-    #Parsing de la réponse
+    #Parsing de la réponse: collecte des billets à destination de Ville d'Arrivée
     soup = BeautifulSoup(reponse.read())
     liste_allers = parserReponse(soup)
         
@@ -193,27 +183,27 @@ def main():
     #envoiMail(bContact, vd, va, dd)
     
     #Si l'utilisateur a saisi une date de retour, on lance une nouvelle requête pour récupérer les billets retour
-    if dr != 'aller_simple':
-    
-        reponse = requete(va, vd, dr)
-    
-        #Parsing de la réponse
-        soup = BeautifulSoup(reponse.read())
-        liste_retours = parserReponse(soup)
-        
-        #Création des objets billets
-        billets = creaBillets(liste_retours)
-     
-        #Affichage des résultats
-        print "Trajet "+ va + " - " + vd + " pour le " + dr
-        print "{} résultat(s) trouvés".format(len(liste_retours[0]))
-
-        #Nota: on a spécifié l'encodage utf-8 por les attributs date_depart et prix afin d'éviter des erreurs d'impression dans la console.
-        for billet in billets:
-            print "Retour le {} à {} pour {} euros. {} contact(s) pris.".format(billet.date_depart.encode('utf-8'), billet.heure_depart,
-                                                                               billet.prix.encode('utf-8'), billet.contacts)
-        print "\n"
-    
+#    if dr != 'aller_simple':
+#    
+#        reponse = requete(va, vd, dr)
+#    
+#        #Parsing de la réponse
+#        soup = BeautifulSoup(reponse.read())
+#        liste_retours = parserReponse(soup)
+#        
+#        #Création des objets billets
+#        billets = creaBillets(liste_retours)
+#     
+#        #Affichage des résultats
+#        print "Trajet "+ va + " - " + vd + " pour le " + dr
+#        print "{} résultat(s) trouvés".format(len(liste_retours[0]))
+#
+#        #Nota: on a spécifié l'encodage utf-8 por les attributs date_depart et prix afin d'éviter des erreurs d'impression dans la console.
+#        for billet in billets:
+#            print "Retour le {} à {} pour {} euros. {} contact(s) pris.".format(billet.date_depart.encode('utf-8'), billet.heure_depart,
+#                                                                               billet.prix.encode('utf-8'), billet.contacts)
+#        print "\n"
+#    
     
     
     
@@ -246,4 +236,4 @@ def main():
     ## billets_nouveaux = [bil for bil in billets if bil.nouveau == True and bil.date_depart == req_troc.jour_dep]
 
 if __name__ == "__main__":
-    main()
+    main()   

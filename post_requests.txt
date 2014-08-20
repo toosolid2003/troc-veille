@@ -1,0 +1,49 @@
+
+#value="0" représente le numéro du billet dans la liste des billets donnés par la requête. Ici, il y a plus de 260 billets dispo, donc
+#la dernière page commence par le billet n°261. Ce chiffre part dans la requête, mais où?
+#Surement une requete POST, car Firefox demande de renvoyer la requête quand on fait "Précédent"
+
+#<input type="hidden" name="L_start_prec" value="0">
+#<input type="hidden" name="L_start_suiv" value="21">
+#<input name="L_start_fin" type="hidden" value="261">
+
+#L_ancien_choix=rech_recents&L_start_debut=0&L_start_prec=0&L_start_suiv=21&choix_billets_suivants=En+cours+...&L_start_fin=481&L_places_r=1&L_h_deb_r=00&L_h_fin_r=24&L_tri_col=date_depot&L_tri_sens=DESC&L_javascript=O
+
+Données Wireshark
+
+POST / HTTP/1.1
+content-type:application/x-www-form-urlencoded
+host: trocdestrains.com
+content-length:217
+
+L_ancien_choix=rech_recent
+&L_start_debut=0
+&L_start_prec=0
+&L_start_suiv=21
+&choix_billets_suivants=En+cours+...
+&L_start_fin=
+&L_places_r=1
+&L_h_deb_r=00
+&L_h_fin_r=24
+&L_tri_col=date_depot
+&L_tri_sens=DESC
+&L_javascript=O
+
+URI: http://trocdestrains.com/affichage-billets-suivants.html
+
+donnees = {'L_ancien_choix':'rech_recents',
+'L_start_debut':'0',
+'L_start_prec':'0',
+'L_start_suiv':'21',
+'choix_billets_suivants':'En+cours+...',
+'L_start_fin':'481',
+'L_places_r':'1',
+'L_h_deb_r':'00',
+'L_h_fin_r':'24',
+'L_tri_col':'date_depot',
+'L_tri_sens':'DESC',
+'L_javascript':'O'}
+
+Dernière analyse: dysfonctionnement de requests. L'url affichée ne semble pas correspondre à une URL post. Plus 
+généralement, pb dans la construction de la requête. L'URI affichage-billets-trains répond, mais à côté: ne comprend
+pas la requête envoyée. A creuser avec urllib ou requests.

@@ -125,7 +125,8 @@ def main():
     
     #### Ouverture de la page 'Billets déposés aujourd'hui'
     print("[+] Ouverture de la page")
-    req = requests.get('http://trocdestrains.com/?choix=rech_recents&tri_col=date_depot&tri_sens=DESC')
+    header={'User-agent':'Mozilla 5.10'}
+    req = requests.get('http://www.trocdestrains.com/?choix=rech_recents&tri_col=date_depot&tri_sens=DESC',headers=header)
 
     #Création d'un objet soup à partir du fichier
     soup = BeautifulSoup(req.content)
@@ -151,7 +152,8 @@ def main():
         if billet['gareOrigine'] == 'Paris' and billet['gareDest'] == va:
             billetsValide.append(billet)
     
-    print(billetsValide)
+    for bil in billetsValide:
+        print("Départ le {} à {} pour {}. Prix: {}€".format(bil['dateDep'], bil['heureDep'], bil['gareDest'],bil['prix']))
     
     
     #Affichage des résultats dans la console

@@ -144,7 +144,8 @@ def main():
 
     for bil in billetsHtml:
         listeBillets.append(recupData(bil))
-
+    
+    print(listeBillets[0])
     
     #Tri des billets: la liste billetsValide contient uniquement les billets avec la destination spécifiée en entrée
     billetsValide = []

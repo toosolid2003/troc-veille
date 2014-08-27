@@ -44,6 +44,14 @@ donnees = {'L_ancien_choix':'rech_recents',
 'L_tri_sens':'DESC',
 'L_javascript':'O'}
 
+19.08.2014
 Dernière analyse: dysfonctionnement de requests. L'url affichée ne semble pas correspondre à une URL post. Plus 
 généralement, pb dans la construction de la requête. L'URI affichage-billets-trains répond, mais à côté: ne comprend
 pas la requête envoyée. A creuser avec urllib ou requests.
+
+20.08.2014
+POST /affichage-billets-suivants.html L_ancien_choix=rech_recents&L_start_debut=0&L_start_prec=0&L_start_suiv=21&choix_billets_suivants=En+cours+...&L_start_fin=481&L_places_r=1&L_h_deb_r=00&L_h_fin_r=24&L_tri_col=date_depot&L_tri_sens=DESC&L_javascript=O
+Je n'arrive tjs pas à lui faire passer une requête POST.
+
+21.08.2014
+Je change de tactique: le script tournera régulièrement, toutes les heures, pour scraper le site. Ne reconstitue pas la BD, mais évite d'en passer par une requête POST. Tout repose donc sur le module requests et sa capacité à ouvrir la page des billets du jour. Pb: le site me redirige dès que je balance l'URL des billets du jour. Le code retour HTTP 302 commence à me faire chier. Comment éviter de l'activer ?
